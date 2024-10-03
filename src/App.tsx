@@ -57,7 +57,7 @@ function App() {
   return (
     <Authenticator>
         <main>
-        <h1>My todos <button>Add user</button></h1>
+        <h1>My todos <button onClick={addUser}>Add user</button></h1>
         <button onClick={createDevice}>Add Device</button>
         <ul>
             { devices.map((d) => <li>{d.identifier}</li>)}
