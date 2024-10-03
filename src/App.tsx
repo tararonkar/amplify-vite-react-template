@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { Schema } from "../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
 import { Authenticator  } from "@aws-amplify/ui-react";
-import { getCurrentUser, fetchUserAttributes  } from 'aws-amplify/auth';
+import { getCurrentUser, fetchUserAttributes, signOut  } from 'aws-amplify/auth';
 
 const client = generateClient<Schema>();
 
@@ -58,7 +58,7 @@ function App() {
   return (
     <Authenticator>
         <main>
-        <h1>My todos <button onClick={addUser}>Add user</button></h1>
+        <h1>My todos <button onClick={addUser}>Add user</button> <button onClick={() => signOut()}>Logout</button></h1>
         <button onClick={createDevice}>Add Device</button>
         <ul>
             { devices.map((d) => <li>{d.identifier}</li>)}
