@@ -49,6 +49,7 @@ function App() {
 
         if(u.data){
             setCurrentUser(u.data)
+            console.log(u.data);
         }
     }
     
