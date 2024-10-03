@@ -3,9 +3,9 @@ import { auth } from './auth/resource';
 import { data } from './data/resource';
 
 const backend = defineBackend({
-  
-//   data,
+  auth,
+  data,
 });
 
-// const { cfnIdentityPool } = backend.auth.resources.cfnResources
-// cfnIdentityPool.allowUnauthenticatedIdentities = false;
+const { cfnIdentityPool } = backend.auth.resources.cfnResources
+cfnIdentityPool.allowUnauthenticatedIdentities = false;

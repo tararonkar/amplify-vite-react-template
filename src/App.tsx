@@ -1,33 +1,67 @@
-// import { useEffect, useState } from "react";
-// import type { Schema } from "../amplify/data/resource";
-// import { generateClient } from "aws-amplify/data";
-import { Authenticator } from "@aws-amplify/ui-react";
+import { useEffect, useState } from "react";
+import type { Schema } from "../amplify/data/resource";
+import { generateClient } from "aws-amplify/data";
+import { Authenticator  } from "@aws-amplify/ui-react";
+import { getCurrentUser, fetchUserAttributes  } from 'aws-amplify/auth';
 
-// const client = generateClient<Schema>();
+const client = generateClient<Schema>();
 
 function App() {
-//   const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
+  const [devices, setDevices] = useState<Array<Schema["Device"]["type"]>>([]);
+    const [currentUser, setCurrentUser] = useState<Schema["User"]["type"] | null>(null)
+  useEffect(() => {
+    client.models.Device.observeQuery().subscribe({
+      next: (data) => setDevices([...data.items]),
+    });
+  }, []);
 
-//   useEffect(() => {
-//     client.models.Todo.observeQuery().subscribe({
-//       next: (data) => setTodos([...data.items]),
-//     });
-//   }, []);
+  function createDevice() {
+    client.models.Device.create({
+        identifier: "DDEV" + Date.now(),
+        userId: currentUser?.id,
+    });
+  }
 
-//   function createTodo() {
-//     client.models.Todo.create({ content: window.prompt("Todo content") });
-//   }
+  const addUser = async () => {
+    const { userId } = await getCurrentUser()
+    const { preferred_username, email  } = await fetchUserAttributes()
+
+    const users = await client.models.User.list({
+        filter: {
+            user_id: {
+                eq: userId
+            }
+        }
+    })
+
+    if(users.data.length > 0)
+    {
+        const u: Schema['User']["type"] = users.data[0];
+        setCurrentUser(u);
+    }
+    else{
+        const u = await client.models.User.create({
+            id: null,
+            user_id: userId,
+            name: preferred_username ?? "",
+            email: email ?? ""
+        })
+
+        if(u.data){
+            setCurrentUser(u.data)
+        }
+    }
+    
+  }
 
   return (
     <Authenticator>
         <main>
-        <h1>My todos</h1>
-        {/* <button onClick={createTodo}>+ new</button>
+        <h1>My todos <button>Add user</button></h1>
+        <button onClick={createDevice}>Add Device</button>
         <ul>
-            {todos.map((todo) => (
-            <li key={todo.id}>{todo.content}</li>
-            ))}
-        </ul> */}
+            { devices.map((d) => <li>{d.identifier}</li>)}
+        </ul>
         <div>
             🥳 App successfully hosted. Try creating a new todo.
             <br />
