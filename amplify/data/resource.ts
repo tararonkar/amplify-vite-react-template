@@ -12,7 +12,7 @@ const schema = a.schema({
       id: a.id(),
       identifier: a.string().required(),
       did: a.string().default("PDC"+Date.now()),
-      created_on: a.datetime().default(new Date(Date.now()).toISOString),
+      created_on: a.datetime().default(new Date(Date.now()).toISOString()),
       status: a.boolean().default(false),
       userId: a.id(),
       user: a.belongsTo('User', 'userId')
